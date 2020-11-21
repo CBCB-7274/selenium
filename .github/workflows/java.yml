@@ -32,5 +32,5 @@ jobs:
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
-          bazel build //java/client/src/...
+          bazel build --build_tag_filters=-remote //java/client/...
           sudo df -h
