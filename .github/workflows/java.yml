@@ -31,6 +31,8 @@ jobs:
       - name: Build grid
         run: |
           sudo df -h
+          java -version
+          javac -version
           cp .github/.bazelrc.local .
           bazel build grid
           sudo df -h
@@ -63,33 +65,33 @@ jobs:
           bazel query "attr(size, small, tests(//java/...)) except attr(tags, lint, tests(//java/...))" | xargs bazel test
           sudo df -h
 
-  lint:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout source tree
-        uses: actions/checkout@v1
-      - name: Cache Bazel artifacts
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/bazel-disk
-            ~/.cache/bazel-repo
-          key: ${{ runner.os }}-bazel-lint-${{ hashFiles('**/BUILD.bazel') }}
-          restore-keys: |
-            ${{ runner.os }}-bazel-lint-
-            ${{ runner.os }}-bazel-
-      - name: Setup bazelisk
-        run: |
-          curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
-          chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
-      - name: Run small tests
-        run: |
-          sudo df -h
-          cp .github/.bazelrc.local .
-          bazel query "attr(tags, lint, tests(//java/...))" | xargs bazel test
-          sudo df -h
+#  lint:
+#    needs: build
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout source tree
+#        uses: actions/checkout@v1
+#      - name: Cache Bazel artifacts
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cache/bazel-disk
+#            ~/.cache/bazel-repo
+#          key: ${{ runner.os }}-bazel-lint-${{ hashFiles('**/BUILD.bazel') }}
+#          restore-keys: |
+#            ${{ runner.os }}-bazel-lint-
+#            ${{ runner.os }}-bazel-
+#      - name: Setup bazelisk
+#        run: |
+#          curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
+#          chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
+#      - name: Run small tests
+#        run: |
+#          sudo df -h
+#          cp .github/.bazelrc.local .
+#          bazel query "attr(tags, lint, tests(//java/...))" | xargs bazel test
+#          sudo df -h
 
   chrome_tests:
     needs: small_tests
