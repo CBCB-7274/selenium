@@ -30,5 +30,7 @@ jobs:
           chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
       - name: Run Bazel build
         run: |
+          sudo df -h
           cp .github/.bazelrc.local .
-          bazel build //java/...
+          bazel build grid
+          sudo df -h
