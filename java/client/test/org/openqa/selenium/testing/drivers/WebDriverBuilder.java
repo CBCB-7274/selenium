@@ -62,10 +62,12 @@ public class WebDriverBuilder implements Supplier<WebDriver> {
     new ImmutableMap.Builder<Browser, Supplier<Capabilities>>()
       .put(Browser.CHROME, ChromeOptions::new)
       .put(Browser.FIREFOX, () -> new FirefoxOptions()
-          .setLegacy(true)
-          .setHeadless(Boolean.parseBoolean(System.getProperty("webdriver.firefox.headless", "false"))))
+        .setLegacy(true)
+        .setHeadless(Boolean.parseBoolean(System.getProperty("webdriver.firefox.headless", "false"))))
       .put(Browser.MARIONETTE, () -> new FirefoxOptions()
-          .setHeadless(Boolean.parseBoolean(System.getProperty("webdriver.firefox.headless", "false"))))
+        .setHeadless(
+          Boolean.parseBoolean(System.getProperty("webdriver.firefox.headless", "false")) ||
+          Boolean.parseBoolean(System.getenv("GITHUB_ACTIONS"))))
       .put(Browser.IE, () -> {
         InternetExplorerOptions options = new InternetExplorerOptions();
         if (Boolean.getBoolean("selenium.ie.disable_native_events")) {

@@ -187,6 +187,7 @@ jobs:
           curl -L -o geckodriver.tar.gz $GECKODRIVER_DOWNLOAD
           gunzip -c geckodriver.tar.gz | tar xopf -
           chmod +x geckodriver && sudo mv geckodriver /usr/local/bin
+          geckodriver -version
       - name: Run browser tests in Firefox
         run: |
           sudo df -h
