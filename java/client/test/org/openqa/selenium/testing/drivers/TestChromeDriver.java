@@ -26,7 +26,6 @@ import org.openqa.selenium.chrome.ChromeDriverLogLevel;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DriverCommand;
-import org.openqa.selenium.testing.TestUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +67,7 @@ public class TestChromeDriver extends ChromeDriver {
 
   private static ChromeOptions chromeWithCustomCapabilities(Capabilities originalCapabilities) {
     ChromeOptions options = new ChromeOptions();
-    if (isOnGitHubActions()) {
+    if (Boolean.parseBoolean(System.getenv("GITHUB_ACTIONS"))) {
       options.setHeadless(true);
     }
     options.addArguments("disable-extensions", "disable-infobars", "disable-breakpad", "disable-dev-shm-usage", "no-sandbox");
