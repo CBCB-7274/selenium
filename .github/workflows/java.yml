@@ -60,7 +60,7 @@ jobs:
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
-          bazel test "attr(size, small, tests(//java/...)) except attr(tags, lint, tests(//java/...))"
+          bazel query "attr(size, small, tests(//java/...)) except attr(tags, lint, tests(//java/...))" | xargs bazel test
           sudo df -h
 
   lint:
@@ -88,7 +88,7 @@ jobs:
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
-          bazel test "attr(tags, lint, tests(//java/...))"
+          bazel query "attr(tags, lint, tests(//java/...))" | xargs bazel test
           sudo df -h
 
   chrome_tests:
@@ -116,5 +116,5 @@ jobs:
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
-          bazel test "attr(tags, chrome, tests(//java/client/...)) except attr(tags, remote, tests(//java/client/...))"
+          bazel query "attr(tags, chrome, tests(//java/client/...)) except attr(tags, remote, tests(//java/client/...))" | xargs bazel test
           sudo df -h
