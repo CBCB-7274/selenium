@@ -3,7 +3,7 @@ name: Java workflow
 on:
   push:
     branches:
-      - trunk
+      - try_github_actions
 
 env:
   NODE_VERSION: '13.x'
@@ -13,10 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source tree
-      uses: actions/checkout@v1
-    - name: Setup bazelisk for Bazel builds
-      uses: holvonix-open/setup-bazelisk@v0.6.0
-    - name: Run Bazel build
-      run: |
-        bazel build //java/...
+      - name: Checkout source tree
+        uses: actions/checkout@v1
+      - name: Setup bazelisk for Bazel builds
+        run: |
+          curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
+          chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
+      - name: Run Bazel build
+        run: |
+          bazel build //java/...
