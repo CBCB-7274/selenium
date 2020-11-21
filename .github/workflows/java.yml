@@ -15,10 +15,20 @@ jobs:
     steps:
       - name: Checkout source tree
         uses: actions/checkout@v1
+      - name: Cache Bazel artifacts
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/bazel-disk
+            ~/.cache/bazel-repo
+          key: ${{ runner.os }}-bazel-${{ hashFiles('**/BUILD.bazel') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-
       - name: Setup bazelisk for Bazel builds
         run: |
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
           chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
       - name: Run Bazel build
         run: |
+          cp .github/.bazelrc.local .
           bazel build //java/...
