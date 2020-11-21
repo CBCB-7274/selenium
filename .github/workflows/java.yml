@@ -118,9 +118,9 @@ jobs:
           path: |
             ~/.cache/bazel-disk
             ~/.cache/bazel-repo
-          key: ${{ runner.os }}-bazel-lint-${{ hashFiles('**/BUILD.bazel') }}
+          key: ${{ runner.os }}-bazel-chrome-tests-${{ hashFiles('**/BUILD.bazel') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-lint-
+            ${{ runner.os }}-chrome-tests-
             ${{ runner.os }}-bazel-build-
       - name: Setup bazelisk
         run: |
