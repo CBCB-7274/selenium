@@ -17,6 +17,8 @@
 
 package org.openqa.selenium.testing.drivers;
 
+import static org.openqa.selenium.testing.TestUtilities.isOnGitHubActions;
+
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -24,6 +26,7 @@ import org.openqa.selenium.chrome.ChromeDriverLogLevel;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DriverCommand;
+import org.openqa.selenium.testing.TestUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +68,9 @@ public class TestChromeDriver extends ChromeDriver {
 
   private static ChromeOptions chromeWithCustomCapabilities(Capabilities originalCapabilities) {
     ChromeOptions options = new ChromeOptions();
-    options.setHeadless(true);
+    if (isOnGitHubActions()) {
+      options.setHeadless(true);
+    }
     options.addArguments("disable-extensions", "disable-infobars", "disable-breakpad", "disable-dev-shm-usage", "no-sandbox");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put("exit_type", "None");
