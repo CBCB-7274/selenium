@@ -65,6 +65,7 @@ public class TestChromeDriver extends ChromeDriver {
 
   private static ChromeOptions chromeWithCustomCapabilities(Capabilities originalCapabilities) {
     ChromeOptions options = new ChromeOptions();
+    options.setHeadless(true);
     options.addArguments("disable-extensions", "disable-infobars", "disable-breakpad", "disable-dev-shm-usage", "no-sandbox");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put("exit_type", "None");
