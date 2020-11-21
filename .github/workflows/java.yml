@@ -21,9 +21,9 @@ jobs:
           path: |
             ~/.cache/bazel-disk
             ~/.cache/bazel-repo
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/BUILD.bazel') }}
+          key: ${{ runner.os }}-bazel-build-${{ hashFiles('**/BUILD.bazel') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-bazel-build-
       - name: Setup bazelisk
         run: |
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
@@ -57,7 +57,7 @@ jobs:
           key: ${{ runner.os }}-bazel-small-tests-${{ hashFiles('**/BUILD.bazel') }}
           restore-keys: |
             ${{ runner.os }}-bazel-small-tests-
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-bazel-build-
       - name: Setup bazelisk
         run: |
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
@@ -121,7 +121,7 @@ jobs:
           key: ${{ runner.os }}-bazel-lint-${{ hashFiles('**/BUILD.bazel') }}
           restore-keys: |
             ${{ runner.os }}-bazel-lint-
-            ${{ runner.os }}-bazel-
+            ${{ runner.os }}-bazel-build-
       - name: Setup bazelisk
         run: |
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
@@ -134,5 +134,6 @@ jobs:
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
+          chromedriver -version
           bazel query "attr(tags, chrome, tests(//java/client/...)) except attr(tags, remote, tests(//java/client/...))" | xargs bazel test
           sudo df -h
