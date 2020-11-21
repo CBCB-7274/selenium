@@ -17,8 +17,6 @@
 
 package org.openqa.selenium.testing.drivers;
 
-import static org.openqa.selenium.testing.TestUtilities.isOnGitHubActions;
-
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.chrome.ChromeDriver;
