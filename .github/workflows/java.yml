@@ -29,6 +29,9 @@ jobs:
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
           chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
       - name: Build grid
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
         run: |
           sudo df -h
           java -version
@@ -59,6 +62,9 @@ jobs:
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
           chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
       - name: Run small tests
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
@@ -86,7 +92,10 @@ jobs:
 #        run: |
 #          curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
 #          chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
-#      - name: Run small tests
+#      - name: Run linter
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: '11'
 #        run: |
 #          sudo df -h
 #          cp .github/.bazelrc.local .
@@ -114,7 +123,10 @@ jobs:
         run: |
           curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
           chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
-      - name: Run small tests
+      - name: Run browser tests in Chrome
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
