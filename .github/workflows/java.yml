@@ -104,8 +104,57 @@ jobs:
 #          cp .github/.bazelrc.local .
 #          bazel query "attr(tags, lint, tests(//java/...))" | xargs bazel test
 #          sudo df -h
+#
+#  chrome_tests:
+#    # needs: small_tests
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout source tree
+#        uses: actions/checkout@v1
+#      - name: Cache Bazel artifacts
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cache/bazel-disk
+#            ~/.cache/bazel-repo
+#          key: ${{ runner.os }}-bazel-chrome-tests-${{ hashFiles('**/BUILD.bazel') }}
+#          restore-keys: |
+#            ${{ runner.os }}-bazel-chrome-tests-
+#            ${{ runner.os }}-bazel-build-
+#      - name: Setup bazelisk
+#        run: |
+#          curl -L -o bazelisk "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
+#          chmod +x bazelisk && sudo mv bazelisk /usr/local/bin/bazel
+#      - name: Setup Java
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: '11'
+#      - name: Setup Chrome and chromedriver
+#        run: |
+#          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+#          echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee -a /etc/apt/sources.list.d/google-chrome.list
+#          sudo apt-get update -qqy
+#          sudo apt-get -qqy install google-chrome-stable
+#          CHROME_VERSION=$(google-chrome-stable --version)
+#          CHROME_FULL_VERSION=${CHROME_VERSION%%.*}
+#          CHROME_MAJOR_VERSION=${CHROME_FULL_VERSION//[!0-9]}
+#          sudo rm /etc/apt/sources.list.d/google-chrome.list
+#          export CHROMEDRIVER_VERSION=`curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION%%.*}`
+#          curl -L -O "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+#          unzip chromedriver_linux64.zip && chmod +x chromedriver && sudo mv chromedriver /usr/local/bin
+#          export CHROMEDRIVER_VERSION=`curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION%%.*}`
+#          curl -L -O "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+#          unzip chromedriver_linux64.zip && chmod +x chromedriver && sudo mv chromedriver /usr/local/bin
+#          chromedriver -version
+#      - name: Run browser tests in Chrome
+#        run: |
+#          sudo df -h
+#          cp .github/.bazelrc.local .
+#          bazel query "attr(tags, chrome, tests(//java/client/...)) except attr(tags, remote, tests(//java/client/...))" | xargs bazel test
+#          sudo df -h
 
-  chrome_tests:
+  firefox_tests:
     # needs: small_tests
     runs-on: ubuntu-latest
 
@@ -118,9 +167,9 @@ jobs:
           path: |
             ~/.cache/bazel-disk
             ~/.cache/bazel-repo
-          key: ${{ runner.os }}-bazel-chrome-tests-${{ hashFiles('**/BUILD.bazel') }}
+          key: ${{ runner.os }}-bazel-firefox-tests-${{ hashFiles('**/BUILD.bazel') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-chrome-tests-
+            ${{ runner.os }}-bazel-firefox-tests-
             ${{ runner.os }}-bazel-build-
       - name: Setup bazelisk
         run: |
@@ -130,26 +179,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-      - name: Setup Chrome and chromedriver
+      - name: Setup Firefox and geckodriver
         run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee -a /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update -qqy
-          sudo apt-get -qqy install google-chrome-stable
-          CHROME_VERSION=$(google-chrome-stable --version)
-          CHROME_FULL_VERSION=${CHROME_VERSION%%.*}
-          CHROME_MAJOR_VERSION=${CHROME_FULL_VERSION//[!0-9]}
-          sudo rm /etc/apt/sources.list.d/google-chrome.list
-          export CHROMEDRIVER_VERSION=`curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION%%.*}`
-          curl -L -O "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip && chmod +x chromedriver && sudo mv chromedriver /usr/local/bin
-          export CHROMEDRIVER_VERSION=`curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION%%.*}`
-          curl -L -O "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip && chmod +x chromedriver && sudo mv chromedriver /usr/local/bin
-          chromedriver -version
-      - name: Run browser tests in Chrome
+          GECKODRIVER_URL=`curl -Ls -o /dev/null -w %{url_effective} https://github.com/mozilla/geckodriver/releases/latest`
+          GECKODRIVER_VERSION=`echo $GECKODRIVER_URL | sed 's#.*/##'`
+          export GECKODRIVER_DOWNLOAD="https://github.com/mozilla/geckodriver/releases/download/$GECKODRIVER_VERSION/geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz"
+          curl -L -o geckodriver.tar.gz $GECKODRIVER_DOWNLOAD
+          gunzip -c geckodriver.tar.gz | tar xopf -
+          chmod +x geckodriver && sudo mv geckodriver /usr/local/bin
+      - name: Run browser tests in Firefox
         run: |
           sudo df -h
           cp .github/.bazelrc.local .
-          bazel query "attr(tags, chrome, tests(//java/client/...)) except attr(tags, remote, tests(//java/client/...))" | xargs bazel test
+          bazel query "attr(tags, firefox, tests(//java/client/...)) except attr(tags, remote, tests(//java/client/...))" | xargs bazel test
           sudo df -h
